@@ -515,8 +515,16 @@ ul { list-style: none; }
 }
 
 @media (max-width: 760px) {
-  .hero { height: 78vh; }
+  .hero { height: 80vh; }
   .hero__body { padding-bottom: 26px; gap: 14px; }
+
+  /* Foto vertical para celular: se ve el monumento y no un recorte feo */
+  .hero__media img { display: none; }
+  .hero__media {
+    background-image: url("../assets/hero-movil.webp");
+    background-size: cover;
+    background-position: center 42%;
+  }
 
   .logo-box { width: 108px; border-width: 5px; border-radius: 1.6rem; }
   .masthead__title { font-size: clamp(1.5rem, 7.2vw, 2.4rem); }
@@ -531,7 +539,10 @@ ul { list-style: none; }
   .playbar__name { max-width: 130px; font-size: .62rem; }
   .playbar__vol { display: none; }
   .playbar__npartist { display: none; }
-  .playbar__nptitle { font-size: .7rem; }
+  .playbar__nplabel { font-size: .5rem; letter-spacing: .12em; white-space: nowrap; }
+  .playbar__nptitle { font-size: .66rem; white-space: nowrap; }
+  .playbar__sep { display: none; }
+  .playbar__np { flex: 1; min-width: 0; }
   .playbar__btn { width: 46px; height: 46px; font-size: 1.05rem; }
   body { padding-bottom: 86px; }
 }
