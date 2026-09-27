@@ -1,0 +1,542 @@
+﻿/* =========================================================
+   Radio Renueva FM — estilo Splendor Disco
+   Hero full-screen, titulo grande, logo en caja blanca,
+   modo claro/oscuro y barra reproductorora negra.
+   ========================================================= */
+
+:root {
+  --acc:      #0f6fd0;          /* azul de la marca */
+  --acc-2:    #0a56a8;
+  --acc-soft: rgba(15,111,208,.12);
+
+  --bg:       #ffffff;
+  --text:     #1a1a1a;
+  --card:     #f6f7f9;
+  --border:   rgba(0,0,0,.09);
+  --soft:     #5a5a5a;
+
+  --r-card: 1.8rem;
+  --r-img:  1.4rem;
+  --shadow:  0 14px 40px rgba(0,0,0,.10);
+  --wrap: 1200px;
+  --t: .3s ease;
+}
+
+/* Modo oscuro */
+body.dark {
+  --bg:     #0d0d0d;
+  --text:   #ffffff;
+  --card:   #191919;
+  --border: rgba(255,255,255,.11);
+  --soft:   #a0a0a0;
+  --shadow: 0 14px 40px rgba(0,0,0,.5);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; scroll-padding-top: 20px; }
+
+body {
+  font-family: 'Montserrat', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+  transition: background .3s, color .3s;
+  padding-bottom: 104px;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; border: 0; background: none; color: inherit; cursor: pointer; }
+ul { list-style: none; }
+::selection { background: var(--acc); color: #fff; }
+
+.wrap { width: 100%; max-width: var(--wrap); margin-inline: auto; padding-inline: 5%; }
+
+/* =========================================================
+   BOTÓN DE MODO CLARO / OSCURO
+   ========================================================= */
+.mode-btn {
+  position: fixed;
+  top: 20px; right: 20px;
+  z-index: 6000;
+  width: 45px; height: 45px;
+  border-radius: 50%;
+  background: var(--acc);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  box-shadow: 0 8px 24px rgba(15,111,208,.4);
+  transition: var(--t);
+}
+.mode-btn:hover { transform: scale(1.1); }
+
+/* =========================================================
+   HERO A PANTALLA COMPLETA
+   ========================================================= */
+.hero {
+  position: relative;
+  width: 100%;
+  height: 92vh;
+  overflow: hidden;
+  background: #000;
+  /* La foto se desvanece hacia abajo */
+  mask-image: linear-gradient(to bottom, #000 88%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 88%, transparent 100%);
+}
+
+.hero__media { position: absolute; inset: 0; }
+.hero__media img { width: 100%; height: 100%; object-fit: cover; }
+.hero__media::after {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.2) 34%, rgba(0,0,0,.55) 72%, rgba(0,0,0,.8) 100%);
+}
+
+.hero__body {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 40px;
+  padding-bottom: 46px;
+}
+
+/* Columna izquierda: distintivo + titulo (como el main-title de Splendor) */
+.hero__left { flex: 1; min-width: 0; }
+
+/* ---- Título grande, abajo sobre la foto ---- */
+.masthead__title {
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: .85;
+  letter-spacing: -1px;
+  font-size: clamp(2rem, 6.4vw, 4.6rem);
+  color: #fff;
+  text-shadow: 0 4px 24px rgba(0,0,0,.6);
+  margin: 0;
+}
+.masthead__title span { color: var(--acc); }
+
+/* =========================================================
+   CUADRO DEL LOGO (como el heart-box de Splendor)
+   ========================================================= */
+/* Tamaño igual al de Splendor: chico y discreto */
+.logo-box {
+  width: 200px;
+  aspect-ratio: 1;
+  border-radius: 2.6rem;
+  border: 7px solid #fff;
+  background: #fff;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 12px 36px rgba(0,0,0,.45);
+}
+@media (min-width: 1024px) {
+  .logo-box { width: 200px; }
+}
+.logo-box img { width: 100%; height: 100%; object-fit: contain; }
+
+/* ---- Distintivo en vivo ---- */
+.badge-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 20px;
+  border-radius: 999px;
+  background: var(--acc);
+  color: #fff;
+  font-size: .72rem;
+  font-weight: 900;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  box-shadow: 0 8px 24px rgba(15,111,208,.4);
+  margin-bottom: 18px;
+}
+
+.equalizer { display: flex; align-items: flex-end; gap: 3px; height: 14px; }
+.equalizer i {
+  width: 3px; height: 100%;
+  background: #fff;
+  border-radius: 2px;
+  animation: eq 1s ease-in-out infinite;
+}
+.equalizer i:nth-child(1) { animation-delay: 0s; }
+.equalizer i:nth-child(2) { animation-delay: .18s; }
+.equalizer i:nth-child(3) { animation-delay: .36s; }
+.equalizer i:nth-child(4) { animation-delay: .54s; }
+@keyframes eq { 0%,100% { height: 30%; } 50% { height: 100%; } }
+
+/* =========================================================
+   TÍTULOS DE BLOQUE
+   ========================================================= */
+.block { padding: 60px 0; }
+
+.block-title {
+  font-size: clamp(1.5rem, 3.4vw, 2.4rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -.5px;
+  text-align: center;
+  margin-bottom: 42px;
+  line-height: 1.1;
+}
+.block-title span { color: var(--acc); }
+.block-title::after {
+  content: '';
+  display: block;
+  width: 50px; height: 4px;
+  background: var(--acc);
+  margin: 10px auto 0;
+  border-radius: 10px;
+}
+
+/* =========================================================
+   TARJETAS
+   ========================================================= */
+.card {
+  background: var(--card);
+  border: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  padding: 12px;
+}
+.card img { border-radius: var(--r-img); width: 100%; aspect-ratio: 1/1; object-fit: cover; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 34px;
+  border-radius: 999px;
+  background: var(--acc);
+  color: #fff;
+  font-size: .74rem;
+  font-weight: 900;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  transition: var(--t);
+}
+.btn:hover { background: var(--acc-2); transform: translateY(-2px); }
+.btn--block { display: flex; width: 100%; }
+
+/* =========================================================
+   VERSÍCULO
+   ========================================================= */
+.verse {
+  padding: 70px 0;
+  background: var(--acc);
+  color: #fff;
+  text-align: center;
+}
+.verse__text {
+  font-size: clamp(1.2rem, 3.4vw, 2.1rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  line-height: 1.3;
+  max-width: 24ch;
+  margin: 0 auto 16px;
+  letter-spacing: -.5px;
+}
+.verse__ref {
+  font-style: normal;
+  font-size: .74rem;
+  font-weight: 800;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  opacity: .85;
+}
+
+/* =========================================================
+   NOSOTROS
+   ========================================================= */
+.about { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
+
+.about__media { position: relative; }
+.about__pic { padding: 10px; }
+.about__pic img { aspect-ratio: 4/4.4; border-radius: calc(var(--r-img) + 4px); }
+
+.about__stat {
+  position: absolute;
+  right: -18px; bottom: -24px;
+  display: flex; align-items: center; gap: 14px;
+  padding: 18px 26px;
+  background: var(--acc);
+  color: #fff;
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow);
+}
+.about__stat strong { font-size: 2.2rem; font-weight: 900; line-height: 1; }
+.about__stat span { font-size: .74rem; text-transform: uppercase; letter-spacing: .08em; opacity: .9; max-width: 11ch; }
+
+.about__content h3 { font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 900; margin-bottom: 16px; text-transform: uppercase; }
+.about__content p { color: var(--soft); margin-bottom: 16px; }
+.about__content .btn { margin-top: 10px; }
+
+/* =========================================================
+   CONTACTO
+   ========================================================= */
+.contact { display: grid; grid-template-columns: .9fr 1.1fr; gap: 50px; align-items: start; }
+
+.contact__list { margin-bottom: 34px; }
+.contact__list li { display: flex; gap: 14px; margin-bottom: 20px; }
+.contact__icon {
+  flex-shrink: 0;
+  display: grid; place-items: center;
+  width: 46px; height: 46px;
+  border-radius: var(--r-img);
+  background: var(--acc);
+  color: #fff;
+  font-size: 1.05rem;
+}
+.contact__list strong { display: block; font-size: .72rem; color: var(--soft); text-transform: uppercase; letter-spacing: .1em; }
+.contact__list a, .contact__list div > span { font-weight: 700; }
+.contact__list a:hover { color: var(--acc); }
+
+.contact__h4 {
+  font-size: .8rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  margin-bottom: 14px;
+}
+
+.pills { display: flex; flex-wrap: wrap; gap: 10px; }
+.pills a {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 14px 26px;
+  border-radius: 999px;
+  background: var(--c);
+  color: #fff;
+  font-size: .7rem;
+  font-weight: 900;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  transition: var(--t);
+}
+.pills a:hover { transform: translateY(-3px); filter: brightness(1.1); }
+
+.form { padding: 30px; }
+.form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form label { display: block; margin-bottom: 16px; }
+.form label > span {
+  display: block;
+  font-size: .68rem;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--soft);
+  margin-bottom: 7px;
+}
+.form input, .form textarea, .form select {
+  width: 100%;
+  padding: 14px 16px;
+  font-family: inherit;
+  font-size: .92rem;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-img);
+  transition: var(--t);
+}
+.form input:focus, .form textarea:focus, .form select:focus {
+  outline: none;
+  border-color: var(--acc);
+  box-shadow: 0 0 0 4px var(--acc-soft);
+}
+.form textarea { resize: vertical; min-height: 120px; }
+.form__note { margin-top: 14px; font-size: .84rem; text-align: center; min-height: 1.2em; font-weight: 700; }
+.form__note.is-ok  { color: #1f9d63; }
+.form__note.is-err { color: #e04a4a; }
+
+/* =========================================================
+   PUBLICACIONES DE FACEBOOK
+   ========================================================= */
+/* Sin padding lateral: el cuadro va pegado a las orillas */
+#facebook .wrap {
+  max-width: 1000px;
+  padding-inline: 0;
+}
+#facebook .block-title { padding-inline: 20px; }
+
+.fb-feed { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+
+.fb-feed__frame {
+  width: 100%;
+  max-width: 900px;
+  min-height: 200px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.fb-page-plugin, .fb-page { width: 100%; }
+
+.fb-feed__btn { font-size: .7rem; margin-inline: 20px; }
+
+@media (max-width: 1040px) {
+  #facebook .wrap { max-width: 100%; padding-inline: 16px; }
+}
+.foot {
+  padding: 70px 0 30px;
+  text-align: center;
+  border-top: 1px solid var(--border);
+}
+.foot__logo { width: 96px; height: 96px; margin: 0 auto 22px; object-fit: contain; }
+.foot__verse { font-size: .9rem; font-weight: 700; margin-bottom: 8px; }
+.foot__copy { font-size: .68rem; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: var(--soft); }
+
+/* =========================================================
+   BARRA REPRODUCTORA (fija, negra)
+   ========================================================= */
+.playbar {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 5000;
+  background: #000;
+  color: #fff;
+  border-top: 4px solid var(--acc);
+  padding: 14px 25px;
+}
+
+.playbar__line { position: absolute; top: -4px; left: 0; width: 100%; height: 4px; background: rgba(255,255,255,.14); }
+.playbar__line span { display: block; width: 0%; height: 100%; background: #fff; transition: width .3s linear; }
+.playbar.is-playing .playbar__line span {
+  background: linear-gradient(90deg, #fff, #8fd0ff, #fff);
+  background-size: 200% 100%;
+  animation: flow 2.4s linear infinite;
+}
+@keyframes flow { to { background-position: -200% 0; } }
+
+.playbar__inner {
+  max-width: var(--wrap);
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.playbar__logo {
+  width: 48px; height: 48px;
+  border-radius: var(--r-img);
+  object-fit: contain;
+  background: #fff;
+  padding: 3px;
+  flex-shrink: 0;
+}
+
+.playbar__info { min-width: 0; flex-shrink: 1; }
+.playbar__name {
+  font-size: .68rem;
+  font-weight: 900;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: 190px;
+}
+.playbar__state { display: flex; align-items: center; gap: 6px; font-size: .6rem; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; color: var(--acc); }
+.playbar__state .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; animation: blink 1.6s ease-in-out infinite; }
+@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
+
+.playbar__sep { width: 1px; height: 34px; background: rgba(255,255,255,.18); flex-shrink: 0; }
+
+/* Metadatos del stream, en el reproductor chico */
+.playbar__np { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.playbar__nplabel {
+  font-size: .56rem;
+  font-weight: 900;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--acc);
+}
+.playbar__nptitle {
+  font-size: .78rem;
+  font-weight: 800;
+  line-height: 1.25;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.playbar__npartist {
+  font-size: .64rem;
+  color: rgba(255,255,255,.6);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.playbar__vol { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.playbar__mute { color: rgba(255,255,255,.7); font-size: 1.05rem; }
+.playbar__mute:hover { color: #fff; }
+.playbar__vol input {
+  width: 90px; height: 4px;
+  -webkit-appearance: none; appearance: none;
+  background: rgba(255,255,255,.22);
+  border-radius: 99px;
+  cursor: pointer;
+}
+.playbar__vol input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: #fff;
+}
+.playbar__vol input::-moz-range-thumb {
+  width: 14px; height: 14px; border: 0; border-radius: 50%; background: #fff;
+}
+
+.playbar__btn {
+  flex-shrink: 0;
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background: var(--acc);
+  color: #fff;
+  font-size: 1.15rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: var(--t);
+}
+.playbar__btn:hover { transform: scale(1.08); }
+.playbar__btn i.fa-play  { margin-left: 3px; }
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+@media (max-width: 1024px) {
+  .about, .contact { grid-template-columns: 1fr; gap: 44px; }
+  .about__stat { right: 8px; }
+  /* El logo se baja debajo del titulo */
+  .hero__body { flex-direction: column; align-items: flex-start; justify-content: flex-end; gap: 26px; }
+  .logo-box { width: 200px; }
+}
+
+@media (max-width: 760px) {
+  .hero { height: 88vh; }
+  .hero__body { padding-bottom: 26px; gap: 14px; }
+
+  .logo-box { width: 115px; border-width: 5px; border-radius: 1.8rem; }
+  .verse { padding: 50px 0; }
+  .form { padding: 22px; }
+  .form__row { grid-template-columns: 1fr; }
+
+  .playbar { padding: 10px 14px; }
+  .playbar__inner { gap: 11px; }
+  .playbar__logo { width: 42px; height: 42px; }
+  .playbar__name { max-width: 130px; font-size: .62rem; }
+  .playbar__vol { display: none; }
+  .playbar__npartist { display: none; }
+  .playbar__nptitle { font-size: .7rem; }
+  .playbar__btn { width: 46px; height: 46px; font-size: 1.05rem; }
+  body { padding-bottom: 86px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,19 @@
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Node (por si se instalan dependencias)
+node_modules/
+npm-debug.log*
+
+# Editores
+.vscode/
+.idea/
+*.swp
+
+# Nunca subir streams ni credenciales
+.env
+.env.local
+*.mp3
+*.aac
+*.pls
