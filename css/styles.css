@@ -508,16 +508,19 @@ ul { list-style: none; }
 @media (max-width: 1024px) {
   .about, .contact { grid-template-columns: 1fr; gap: 44px; }
   .about__stat { right: 8px; }
-  /* El logo se baja debajo del titulo */
-  .hero__body { flex-direction: column; align-items: flex-start; justify-content: flex-end; gap: 26px; }
-  .logo-box { width: 200px; }
+  /* La fila se mantiene: titulo a la izquierda, logo a la derecha */
+  .hero__body { gap: 20px; }
+  .logo-box { width: 150px; border-width: 6px; border-radius: 2rem; }
+  .masthead__title { font-size: clamp(1.7rem, 6.4vw, 3rem); }
 }
 
 @media (max-width: 760px) {
-  .hero { height: 88vh; }
+  .hero { height: 78vh; }
   .hero__body { padding-bottom: 26px; gap: 14px; }
 
-  .logo-box { width: 115px; border-width: 5px; border-radius: 1.8rem; }
+  .logo-box { width: 108px; border-width: 5px; border-radius: 1.6rem; }
+  .masthead__title { font-size: clamp(1.5rem, 7.2vw, 2.4rem); }
+  .badge-live { font-size: .62rem; padding: 7px 15px; letter-spacing: .12em; }
   .verse { padding: 50px 0; }
   .form { padding: 22px; }
   .form__row { grid-template-columns: 1fr; }
