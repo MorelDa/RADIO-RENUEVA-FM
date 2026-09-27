@@ -17,3 +17,5 @@ npm-debug.log*
 *.mp3
 *.aac
 *.pls
+
+.vercel
