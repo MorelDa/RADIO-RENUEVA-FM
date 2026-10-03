@@ -118,7 +118,8 @@ async function enviarFCM(tokens, { titulo, cuerpo, imagen, link }) {
               android: {
                 priority: 'HIGH',
                 notification: {
-                  channel_id: 'renueva',
+                  // Sin channel_id: usa el canal que crea la app (fallback),
+                  // así Android nunca descarta la notificación.
                   image: imagen || undefined,
                   click_action: link || undefined,
                 },
