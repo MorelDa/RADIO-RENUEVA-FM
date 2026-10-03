@@ -132,6 +132,30 @@
     <div class="status" id="stPub"></div>
   </section>
 
+  <!-- AVISOS -->
+  <section class="card oculto" id="cardAvisos">
+    <h2>Mandar aviso a la app</h2>
+    <p class="hint">Le llega como notificación al celular, aunque la app esté cerrada o en segundo plano.</p>
+
+    <label>Título</label>
+    <input id="titulo" placeholder="Ej: Ahora en vivo" maxlength="60">
+
+    <label>Mensaje</label>
+    <input id="mensaje" placeholder="Ej: Escuchá el programa de la tarde" maxlength="160">
+
+    <label>Link al tocar el aviso (opcional)</label>
+    <input id="nLink" placeholder="https://wa.me/595..." >
+
+    <label>Imagen del aviso (opcional · 1200×600)</label>
+    <input id="nFile" type="file" accept="image/*">
+
+    <div class="acciones">
+      <button id="btnEnviar">Enviar aviso</button>
+    </div>
+    <div class="status" id="stAviso"></div>
+    <p class="hint" id="contDevices" style="margin-top:10px"></p>
+  </section>
+
   <p class="hint" style="text-align:center">
     Los cambios aparecen en el celular en menos de 1 minuto.
   </p>
@@ -250,7 +274,9 @@ function mostrarPanel() {
   $('cardPin').classList.add('oculto');
   $('cardSubir').classList.remove('oculto');
   $('cardLista').classList.remove('oculto');
+  $('cardAvisos').classList.remove('oculto');
   cargar();
+  contarDevices();
 }
 $('btnEntrar').onclick = () => {
   const u = $('usuario').value.trim().toLowerCase();
@@ -304,6 +330,58 @@ $('btnPublicar').onclick = async () => {
     aviso($('stPub'), 'err', 'No se pudo publicar: ' + e.message);
   }
   $('btnPublicar').disabled = false;
+};
+
+/* ── Notificaciones push ── */
+const API_PUSH = '/api/notificar';
+
+async function contarDevices() {
+  try {
+    const r = await fetch(API_PUSH);
+    const d = await r.json();
+    $('contDevices').textContent = d.dispositivos
+      ? `📱 Celulares conectados: ${d.dispositivos}`
+      : '📱 Todavía no hay celulares conectados con la app.';
+  } catch (_) {
+    $('contDevices').textContent = '';
+  }
+}
+
+$('btnEnviar').onclick = async () => {
+  const titulo = $('titulo').value.trim();
+  const cuerpo = $('mensaje').value.trim();
+  if (!titulo || !cuerpo) {
+    aviso($('stAviso'), 'err', 'Escribí el título y el mensaje.');
+    return;
+  }
+  $('btnEnviar').disabled = true;
+  aviso($('stAviso'), 'info', 'Enviando…');
+  try {
+    let imagen = '';
+    const f = $('nFile').files[0];
+    if (f) {
+      const { base64, nombre } = await ajustarImagen(f);
+      const up = await api('POST', { accion: 'subir', nombre, base64 });
+      imagen = up.imagen;
+    }
+    const r = await fetch(API_PUSH, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-panel-pin': PIN },
+      body: JSON.stringify({ accion: 'enviar', titulo, cuerpo, imagen, link: $('nLink').value.trim() }),
+    });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(d.error || ('Error ' + r.status));
+    if (d.ok) {
+      aviso($('stAviso'), 'ok', `¡Aviso enviado! Llegó a ${d.enviados} celular(es).`);
+      $('titulo').value = ''; $('mensaje').value = ''; $('nLink').value = ''; $('nFile').value = '';
+      contarDevices();
+    } else {
+      aviso($('stAviso'), 'err', d.mensaje || 'No se pudo enviar.');
+    }
+  } catch (e) {
+    aviso($('stAviso'), 'err', 'No se pudo enviar: ' + e.message);
+  }
+  $('btnEnviar').disabled = false;
 };
 
 /* ── Arranque ── */
