@@ -1,15 +1,6 @@
 [
   {
     "imagen": "https://radio-renueva-fm.vercel.app/assets/banners/banner-1.png",
-    "texto": "Radio Renueva FM · Programación 24 horas"
-  },
-  {
-    "imagen": "https://radio-renueva-fm.vercel.app/assets/banners/banner-2.png",
-    "texto": "Escuchanos en vivo"
-  },
-  {
-    "imagen": "https://radio-renueva-fm.vercel.app/assets/banners/banner-3.png",
-    "texto": "Escribinos por WhatsApp",
-    "link": "https://wa.me/595981922429"
+    "texto": "Prueba del panel"
   }
 ]
