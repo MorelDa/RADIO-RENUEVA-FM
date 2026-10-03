@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panel de Banners · Radio Renueva FM</title>
+<style>
+  :root {
+    --azul: #0E5AA7;
+    --azul-osc: #002759;
+    --oro: #C49A1E;
+    --gris: #5A7396;
+    --borde: #d8e2ee;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: #eef3f9;
+    color: #0b1b30;
+  }
+  header {
+    background: linear-gradient(135deg, var(--azul), var(--azul-osc));
+    color: #fff;
+    padding: 18px 20px;
+  }
+  header h1 { margin: 0; font-size: 20px; letter-spacing: .5px; }
+  header p { margin: 4px 0 0; opacity: .85; font-size: 13px; }
+  main { max-width: 940px; margin: 0 auto; padding: 18px 14px 60px; }
+  .card {
+    background: #fff;
+    border: 1px solid var(--borde);
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 10px rgba(0,32,80,.06);
+  }
+  .card h2 { margin: 0 0 12px; font-size: 16px; color: var(--azul-osc); }
+  label { display: block; font-size: 12.5px; font-weight: 700; margin: 10px 0 4px; color: #23405f; }
+  input, textarea {
+    width: 100%; padding: 10px 12px; border: 1px solid var(--borde);
+    border-radius: 10px; font: inherit; font-size: 14px; background: #fbfdff;
+  }
+  textarea { min-height: 70px; font-family: ui-monospace, Consolas, monospace; font-size: 12.5px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .row > * { flex: 1 1 200px; }
+  button {
+    border: 0; border-radius: 12px; padding: 12px 18px; font: inherit;
+    font-weight: 800; cursor: pointer; background: var(--azul); color: #fff;
+  }
+  button.sec { background: #e7eef8; color: var(--azul-osc); }
+  button.danger { background: #fdeaea; color: #b32020; }
+  button:disabled { opacity: .55; cursor: default; }
+  .acciones { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+  .status { margin-top: 12px; font-size: 13.5px; padding: 10px 12px; border-radius: 10px; display: none; }
+  .status.ok { display: block; background: #e8f7ee; color: #12633a; }
+  .status.err { display: block; background: #fdeaea; color: #a32020; }
+  .status.info { display: block; background: #eaf2fd; color: var(--azul-osc); }
+  .lista { display: grid; gap: 12px; }
+  .item { display: flex; gap: 12px; align-items: center; border: 1px solid var(--borde); border-radius: 14px; padding: 10px; background: #fbfdff; }
+  .item img { width: 168px; height: 70px; object-fit: cover; border-radius: 10px; background: #e6edf6; flex: none; }
+  .item .meta { flex: 1; min-width: 0; }
+  .item .meta b { font-size: 14px; display: block; }
+  .item .meta span { font-size: 12px; color: var(--gris); word-break: break-all; }
+  .item .ops { display: flex; gap: 6px; flex: none; }
+  .item .ops button { padding: 8px 11px; font-size: 12.5px; border-radius: 9px; }
+  .hint { font-size: 12.5px; color: var(--gris); margin-top: 6px; line-height: 1.5; }
+  .preview { width: 100%; border-radius: 12px; border: 1px solid var(--borde); margin-top: 10px; display: none; }
+  .pill { display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: 1px; background: var(--oro); color: #fff; border-radius: 999px; padding: 3px 9px; }
+  code { background: #eef3f9; padding: 1px 5px; border-radius: 5px; font-size: 12.5px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Panel de Banners · Radio Renueva FM</h1>
+  <p>Subí, ordená y borrá los banners ( sliders ) de la app sin necesidad de publicar una versión nueva.</p>
+</header>
+
+<main>
+
+  <!-- 1. CONEXIÓN -->
+  <section class="card">
+    <h2>1 · Conexión con GitHub</h2>
+    <p class="hint">
+      Se usa solo para guardar los banners en el repositorio. Vercel publica solo.
+      <br>El <b>token</b> se queda guardado en este navegador (no se envía a ningún lado más).
+    </p>
+    <div class="row">
+      <div>
+        <label>Usuario / organización</label>
+        <input id="owner" placeholder="ej: radio-renueva">
+      </div>
+      <div>
+        <label>Repositorio</label>
+        <input id="repo" placeholder="ej: web">
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label>Rama</label>
+        <input id="branch" placeholder="main">
+      </div>
+      <div>
+        <label>Carpeta de imágenes</label>
+        <input id="imgDir" placeholder="assets/banners">
+      </div>
+    </div>
+    <label>Token personal de GitHub (con permiso <code>public_repo</code>)</label>
+    <input id="token" type="password" placeholder="ghp_...">
+    <div class="acciones">
+      <button id="btnGuardarCfg">Guardar configuración</button>
+      <button class="sec" id="btnProbar">Probar conexión</button>
+    </div>
+    <div class="status" id="stCfg"></div>
+  </section>
+
+  <!-- 2. SUBIR IMAGEN -->
+  <section class="card">
+    <h2>2 · Subir un banner</h2>
+    <div class="row">
+      <div>
+        <label>Elegí la imagen (JPG o PNG · 1200×500)</label>
+        <input id="file" type="file" accept="image/*">
+      </div>
+      <div>
+        <label>o pegá el link de una imagen</label>
+        <input id="urlImg" placeholder="https://…">
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label>Texto (opcional)</label>
+        <input id="texto" placeholder="Programación 24 hs">
+      </div>
+      <div>
+        <label>Link al tocar (opcional)</label>
+        <input id="link" placeholder="https://wa.me/595...">
+      </div>
+    </div>
+    <img class="preview" id="prev" alt="vista previa">
+    <div class="acciones">
+      <button id="btnAgregar">Agregar al carrusel</button>
+      <button class="sec" id="btnCancelar">Limpiar</button>
+    </div>
+    <div class="status" id="stImg"></div>
+  </section>
+
+  <!-- 3. LISTA + PUBLICAR -->
+  <section class="card">
+    <h2>3 · Banners del carrusel</h2>
+    <p class="hint">Usá las flechas para cambiar el orden. Al publicar, la app toma el cambio en menos de 1 minuto.</p>
+    <div class="lista" id="lista"></div>
+    <div class="acciones">
+      <button id="btnPublicar">Publicar cambios</button>
+      <button class="sec" id="btnRecargar">Recargar desde GitHub</button>
+    </div>
+    <div class="status" id="stPub"></div>
+  </section>
+
+  <p class="hint">
+    <span class="pill">Cómo lo ve el cliente</span> Con un usuario y un token puede cambiar los banners desde el celular.
+    El token nunca se publica en la web de la radio.
+  </p>
+</main>
+
+<script>
+/* ─────────────────────────────────────────────────────────────
+   Panel de banners — escribe en GitHub, Vercel publica solo.
+   ───────────────────────────────────────────────────────────── */
+const CFG_KEY = 'rr-panel-cfg';
+const CFG = {
+  owner: 'TU_USUARIO',
+  repo: 'TU_REPO',
+  branch: 'main',
+  imgDir: 'assets/banners',
+  token: '',
+};
+let banners = [];   // [{imagen, texto, link}]
+
+const $ = id => document.getElementById(id);
+const estado = (el, tipo, msg) => {
+  el.className = 'status ' + tipo;
+  el.textContent = msg;
+};
+
+/* ── Config ── */
+function leerCfg() {
+  const guardada = localStorage.getItem(CFG_KEY);
+  Object.assign(CFG, guardada ? JSON.parse(guardada) : {});
+  $('owner').value = CFG.owner;
+  $('repo').value = CFG.repo;
+  $('branch').value = CFG.branch || 'main';
+  $('imgDir').value = CFG.imgDir || 'assets/banners';
+  $('token').value = CFG.token;
+}
+function tomarCfg() {
+  CFG.owner = $('owner').value.trim().replace(/^https?:\/\/github\.com\//, '').replace(/\/.*$/, '');
+  CFG.repo = $('repo').value.trim();
+  CFG.branch = $('branch').value.trim() || 'main';
+  CFG.imgDir = $('imgDir').value.trim().replace(/^\/+|\/+$/g, '') || 'assets/banners';
+  CFG.token = $('token').value.trim();
+  localStorage.setItem(CFG_KEY, JSON.stringify(CFG));
+}
+$('btnGuardarCfg').onclick = () => {
+  tomarCfg();
+  estado($('stCfg'), 'ok', 'Configuración guardada en este navegador.');
+};
+$('btnProbar').onclick = async () => {
+  tomarCfg();
+  if (!CFG.owner || !CFG.repo || !CFG.token) {
+    estado($('stCfg'), 'err', 'Faltan usuario, repositorio o token.');
+    return;
+  }
+  estado($('stCfg'), 'info', 'Probando…');
+  try {
+    const r = await fetch(`https://api.github.com/repos/${CFG.owner}/${CFG.repo}`, {
+      headers: { Authorization: 'Bearer ' + CFG.token, Accept: 'application/vnd.github+json' },
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    estado($('stCfg'), 'ok', 'Conectado ✔ Ya podés subir banners.');
+  } catch (e) {
+    estado($('stCfg'), 'err', 'No se pudo conectar: ' + e.message);
+  }
+};
+
+/* ── GitHub API ── */
+async function api(ruta, opciones = {}) {
+  const r = await fetch(`https://api.github.com/repos/${CFG.owner}/${CFG.repo}${ruta}`, {
+    ...opciones,
+    headers: {
+      Authorization: 'Bearer ' + CFG.token,
+      Accept: 'application/vnd.github+json',
+      'Content-Type': 'application/json',
+      ...(opciones.headers || {}),
+    },
+  });
+  if (!r.ok) {
+    const t = await r.text();
+    throw new Error('GitHub ' + r.status + ': ' + t.slice(0, 160));
+  }
+  return r.status === 204 ? null : r.json();
+}
+
+async function leerBanners() {
+  try {
+    const f = await api(`/contents/banners.json?ref=${CFG.branch}`);
+    const txt = decodeURIComponent(escape(atob(f.content.replace(/\n/g, ''))));
+    const json = JSON.parse(txt);
+    banners = Array.isArray(json) ? json : (json.banners || []);
+    estado($('stPub'), 'info', banners.length + ' banner(s) cargado(s) desde GitHub.');
+  } catch (e) {
+    banners = [];
+    estado($('stPub'), 'info', 'Todavía no existe banners.json (se crea al publicar el primero).');
+  }
+  pintarLista();
+}
+
+async function guardarEnGithub(mensaje) {
+  estado($('stPub'), 'info', 'Publicando…');
+  const contenido = btoa(unescape(encodeURIComponent(JSON.stringify(banners, null, 2))));
+  try {
+    let sha = null;
+    try {
+      const f = await api(`/contents/banners.json?ref=${CFG.branch}`);
+      sha = f.sha;
+    } catch (_) {}
+    await api('/contents/banners.json', {
+      method: 'PUT',
+      body: JSON.stringify({
+        message: 'chore: actualizar banners desde el panel',
+        content: contenido,
+        branch: CFG.branch,
+        ...(sha ? { sha } : {}),
+      }),
+    });
+    estado($('stPub'), 'ok', mensaje + ' Vercel publica en ~30 segundos.');
+  } catch (e) {
+    estado($('stPub'), 'err', 'No se pudo publicar: ' + e.message);
+  }
+}
+
+async function subirImagen(file) {
+  const base64 = await new Promise((res, rej) => {
+    const fr = new FileReader();
+    fr.onload = () => res(String(fr.result).split(',')[1]);
+    fr.onerror = rej;
+    fr.readAsDataURL(file);
+  });
+  const nombre = (CFG.imgDir + '/' + file.name.replace(/[^\w.\-]/g, '_')).replace(/^\/+/, '');
+  estado($('stImg'), 'info', 'Subiendo ' + file.name + '…');
+  try {
+    let sha = null;
+    try {
+      const f = await api(`/contents/${nombre}?ref=${CFG.branch}`);
+      sha = f.sha;
+    } catch (_) {}
+    await api('/contents/' + nombre, {
+      method: 'PUT',
+      body: JSON.stringify({
+        message: 'chore: subir banner ' + file.name,
+        content: base64,
+        branch: CFG.branch,
+        ...(sha ? { sha } : {}),
+      }),
+    });
+    estado($('stImg'), 'ok', 'Imagen subida ✔ Ya podés agregarla al carrusel.');
+    return 'https://raw.githubusercontent.com/' + CFG.owner + '/' + CFG.repo + '/' + CFG.branch + '/' + nombre;
+  } catch (e) {
+    estado($('stImg'), 'err', 'Falló la subida: ' + e.message);
+    return null;
+  }
+}
+
+/* ── Lista ── */
+function pintarLista() {
+  const cont = $('lista');
+  if (!banners.length) {
+    cont.innerHTML = '<p class="hint">Todavía no hay banners. Subí una imagen arriba.</p>';
+    return;
+  }
+  cont.innerHTML = banners
+    .map(
+      (b, i) => `
+    <div class="item">
+      <img src="${b.imagen}" alt="">
+      <div class="meta">
+        <b>${i + 1}. ${b.texto ? b.texto : '(sin texto)'}</b>
+        <span>${b.imagen}</span>
+        ${b.link ? '<span>↗ ' + b.link + '</span>' : ''}
+      </div>
+      <div class="ops">
+        <button class="sec" onclick="mover(${i},-1)">↑</button>
+        <button class="sec" onclick="mover(${i},1)">↓</button>
+        <button class="danger" onclick="borrar(${i})">✕</button>
+      </div>
+    </div>`
+    )
+    .join('');
+}
+function mover(i, d) {
+  const j = i + d;
+  if (j < 0 || j >= banners.length) return;
+  [banners[i], banners[j]] = [banners[j], banners[i]];
+  pintarLista();
+}
+function borrar(i) {
+  if (!confirm('¿Borrar este banner?')) return;
+  banners.splice(i, 1);
+  pintarLista();
+}
+
+/* ── Acciones ── */
+$('btnAgregar').onclick = async () => {
+  tomarCfg();
+  const archivo = $('file').files[0];
+  const linkUrl = $('urlImg').value.trim();
+  let imagen = null;
+  if (archivo) {
+    $('btnAgregar').disabled = true;
+    imagen = await subirImagen(archivo);
+    $('btnAgregar').disabled = false;
+  } else if (linkUrl) {
+    imagen = linkUrl;
+  }
+  if (!imagen) {
+    estado($('stImg'), 'err', 'Elegí una imagen o escribí un link.');
+    return;
+  }
+  banners.push({
+    imagen,
+    texto: $('texto').value.trim() || undefined,
+    link: $('link').value.trim() || undefined,
+  });
+  pintarLista();
+  estado($('stImg'), 'ok', 'Agregado a la lista. Presioná “Publicar cambios”.');
+  $('file').value = ''; $('urlImg').value = ''; $('texto').value = ''; $('link').value = '';
+  $('prev').style.display = 'none';
+};
+
+$('btnCancelar').onclick = () => {
+  $('file').value = ''; $('urlImg').value = ''; $('texto').value = ''; $('link').value = '';
+  $('prev').style.display = 'none';
+  estado($('stImg'), 'info', '');
+};
+
+$('btnPublicar').onclick = async () => {
+  tomarCfg();
+  if (!banners.length) { estado($('stPub'), 'err', 'No hay banners para publicar.'); return; }
+  await guardarEnGithub('¡Listo! La app va a mostrar estos banners.');
+};
+
+$('btnRecargar').onclick = () => { tomarCfg(); leerBanners(); };
+
+$('file').onchange = e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  $('prev').src = URL.createObjectURL(f);
+  $('prev').style.display = 'block';
+  estado($('stImg'), 'info', 'Toca “Agregar al carrusel” para subirla.');
+};
+
+leerCfg();
+leerBanners();
+</script>
+</body>
+</html>
